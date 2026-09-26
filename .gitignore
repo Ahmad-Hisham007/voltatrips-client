@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+AGENTS.md
+CLAUDE.md
+.opencode
+.opencode/*
+
+# local agent/tooling config (contains secrets) + generated dumps
+opencode.jsonc
+repompack-output.xml
+
