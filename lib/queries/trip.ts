@@ -1,6 +1,7 @@
 export type TripImageNode = {
   id: string;
   slug: string;
+  mediaItemUrl: string;
   mediaDetails: {
     file: string;
     filePath: string;

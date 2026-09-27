@@ -5,6 +5,10 @@ import { fetchTrip, type Trip } from "@/lib/queries/trip";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BookingForm } from "@/components/booking-form";
 import { TripHeroCarousel } from "@/components/trip-hero-carousel";
+import { TiDocumentText } from "react-icons/ti";
+import { LuMap, LuMapPin } from "react-icons/lu";
+import { MdOutlineCameraAlt } from "react-icons/md";
+import { RiUserHeartLine } from "react-icons/ri";
 
 export const metadata: Metadata = {
   title: "Trip Details",
@@ -12,11 +16,11 @@ export const metadata: Metadata = {
 
 // Tab values matching the design spec
 const TABS = [
-  { id: "information", label: "Information" },
-  { id: "tour-plan", label: "Tour Plan" },
-  { id: "location", label: "Location" },
-  { id: "gallery", label: "Gallery" },
-  { id: "reviews", label: "Reviews" },
+  { id: "information", label: "Information", icon: TiDocumentText },
+  { id: "tour-plan", label: "Tour Plan", icon: LuMap },
+  { id: "location", label: "Location", icon: LuMapPin },
+  { id: "gallery", label: "Gallery", icon: MdOutlineCameraAlt },
+  { id: "reviews", label: "Reviews", icon: RiUserHeartLine },
 ];
 
 export default async function TripPage({
@@ -43,58 +47,59 @@ export default async function TripPage({
       {/* =========================================== */}
       {/* 2. MAIN LAYOUT: 2-column grid              */}
       {/* =========================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-4 lg:px-8 pb-8">
+      <Tabs defaultValue="information" className="w-full">
+        {/* TabsList — gray background bar with active indicator */}
+        <div className="bg-gray-100">
+          <TabsList className="flex flex-col sm:flex-row max-w-325 md:mx-auto mx-12 bg-transparent border-0! outline-0 shadow-none">
+            {TABS.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="md:not-last:not-first:not-odd:border-x md:border-y-0! not-last:not-first:not-odd:border-y flex justify-center items-center gap-2 text-body text-[16px] cursor-pointer leading-tight border-gray-300 flex-1 p-5.5! data-[state=active]:bg-white data-[state=active]:border-transparent data-[state=active]:text-primary"
+              >
+                {<tab.icon className="text-lg" />} {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
         {/* LEFT COLUMN ~72% (tabs wrapper) */}
-        <section className="lg:col-span-9">
-          {/* Tabs wrapper = gray background, full width of column */}
-          <div className="bg-gray-100 border border-border rounded-lg overflow-hidden">
-            <Tabs defaultValue="information" className="w-full">
-              {/* TabsList — gray background bar with active indicator */}
-              <TabsList className="flex flex-col sm:flex-row bg-gray-100 border-b border-border sm:border-b-0 sm:border-r border-border">
-                {TABS.map((tab) => (
-                  <TabsTrigger
-                    key={tab.id}
-                    value={tab.id}
-                    className="border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
-                  >
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:px-8 pb-27.5 max-w-325 mx-auto md:pt-20.5 pt-10">
+          <section className="lg:col-span-9 px-5">
+            <TabsContent value="information">
+              <InformationTab trip={trip} />
+            </TabsContent>
 
-              {/* Tab Content – boxed card inside tabs */}
-              <div className="p-4 sm:p-6 bg-surface rounded-b-lg">
-                <TabsContent value="information">
-                  <InformationTab trip={trip} />
-                </TabsContent>
+            <TabsContent value="tour-plan">
+              <TourPlanTab itinerary={trip.tripFields.tripItinerary} />
+            </TabsContent>
 
-                <TabsContent value="tour-plan">
-                  <TourPlanTab itinerary={trip.tripFields.tripItinerary} />
-                </TabsContent>
+            <TabsContent value="location">
+              <LocationTab location={trip.tripFields.tripLocation} />
+            </TabsContent>
 
-                <TabsContent value="location">
-                  <LocationTab location={trip.tripFields.tripLocation} />
-                </TabsContent>
+            <TabsContent value="gallery">
+              <GalleryTab images={trip.tripFields.tripGallery.nodes} />
+            </TabsContent>
 
-                <TabsContent value="gallery">
-                  <GalleryTab images={trip.tripFields.tripGallery.nodes} />
-                </TabsContent>
+            <TabsContent value="reviews">
+              <ReviewsTab />
+            </TabsContent>
+            {/* Empty wrapper that matches your design structure */}
+            <div className="bg-gray-100 border border-border rounded-lg overflow-hidden"></div>
+          </section>
 
-                <TabsContent value="reviews">
-                  <ReviewsTab />
-                </TabsContent>
-              </div>
-            </Tabs>
-          </div>
-        </section>
+          {/* RIGHT COLUMN ~28% (sticky sidebar) */}
+          <aside className="lg:col-span-3 px-5">
+            <div className="sticky top-24">
+              <BookingForm />
+            </div>
+          </aside>
+        </div>
 
-        {/* RIGHT COLUMN ~28% (sticky sidebar) */}
-        <aside className="lg:col-span-3">
-          <div className="sticky top-24">
-            <BookingForm />
-          </div>
-        </aside>
-      </div>
+        {/* Tab Content – boxed card inside tabs */}
+        <div className="p-4 sm:p-6 bg-surface rounded-b-lg"></div>
+      </Tabs>
     </div>
   );
 }
@@ -128,9 +133,7 @@ function InformationTab({ trip }: { trip: Trip }) {
       <dl className="divide-y divide-border">
         <div className="flex justify-between py-2">
           <dt className="text-muted">Departure</dt>
-          <dd className="text-right text-body">
-            {trip.tripFields.departure}
-          </dd>
+          <dd className="text-right text-body">{trip.tripFields.departure}</dd>
         </div>
         <div className="flex justify-between py-2">
           <dt className="text-muted">Departure Time</dt>
@@ -140,9 +143,7 @@ function InformationTab({ trip }: { trip: Trip }) {
         </div>
         <div className="flex justify-between py-2">
           <dt className="text-muted">Dress Code</dt>
-          <dd className="text-right text-body">
-            {trip.tripFields.dressCode}
-          </dd>
+          <dd className="text-right text-body">{trip.tripFields.dressCode}</dd>
         </div>
       </dl>
 
@@ -171,7 +172,9 @@ function InformationTab({ trip }: { trip: Trip }) {
       </div>
 
       {/* Short Description */}
-      <p className="text-body">{trip.tripFields.tripDetails.tripShortDescription}</p>
+      <p className="text-body">
+        {trip.tripFields.tripDetails.tripShortDescription}
+      </p>
 
       {/* Full Description */}
       <div
@@ -237,9 +240,9 @@ function LocationTab({ location }: { location: string }) {
       {/* Extended location text placeholder */}
       <div className="text-body">
         <p>
-          Explore the beautiful islands of Thailand with our expertly
-          curated itinerary. From pristine beaches to vibrant markets,
-          discover the hidden gems of Southeast Asia.
+          Explore the beautiful islands of Thailand with our expertly curated
+          itinerary. From pristine beaches to vibrant markets, discover the
+          hidden gems of Southeast Asia.
         </p>
       </div>
     </div>
@@ -268,7 +271,11 @@ function GalleryTab({
           {/* placeholder for lightbox - will open modal on click */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={img.mediaDetails.filePath.startsWith("/") ? `https://roam.qodeinteractive.com${img.mediaDetails.filePath}` : img.mediaDetails.filePath}
+            src={
+              img.mediaDetails.filePath.startsWith("/")
+                ? `https://roam.qodeinteractive.com${img.mediaDetails.filePath}`
+                : img.mediaDetails.filePath
+            }
             alt="Gallery image"
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
@@ -285,7 +292,9 @@ function ReviewsTab() {
         <h2 className="text-heading font-display text-2xl lg:text-3xl">
           Reviews
         </h2>
-        <p className="mt-1 text-body">Join the conversation and share your experience!</p>
+        <p className="mt-1 text-body">
+          Join the conversation and share your experience!
+        </p>
       </div>
 
       {/* <ReviewForm /> — import when available */}
