@@ -18,16 +18,13 @@ type CarouselProps = {
   price?: number;
 };
 
-const SWIPE_DETECTION_THRESHOLD = 50;
+const SWIPE_THRESHOLD = 50;
 
 export function TripHeroCarousel({ images = [], price = 0 }: CarouselProps) {
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
-  const isBeginning = current === 0;
-  const isEnd = current === images.length - 1;
 
-  // Build a full image list for slide
-  const slideCount = images.length || 1;
+  // Fallback to placeholder if no images
   const displayImages =
     images.length > 0
       ? images
@@ -42,16 +39,20 @@ export function TripHeroCarousel({ images = [], price = 0 }: CarouselProps) {
           },
         ];
 
-  // Navigate
+  // Carousel state helpers
+  const slideCount = displayImages.length;
+  const isBeginning = current === 0;
+  const isEnd = current === slideCount - 1;
+
   const prev = () => setCurrent((c) => (c <= 0 ? 0 : c - 1));
-  const next = () =>
-    setCurrent((c) => (c >= slideCount - 1 ? slideCount - 1 : c + 1));
+  const next = () => setCurrent((c) => (c >= slideCount - 1 ? slideCount - 1 : c + 1));
 
   const handleTouchStart = (e: React.TouchEvent) =>
     setTouchStart(e.touches[0].clientX);
+
   const handleTouchEnd = (e: React.TouchEvent) => {
     const delta = touchStart - e.touches[0].clientX;
-    if (Math.abs(delta) > SWIPE_DETECTION_THRESHOLD) {
+    if (Math.abs(delta) > SWIPE_THRESHOLD) {
       if (delta > 0) next();
       else prev();
     }
@@ -60,91 +61,114 @@ export function TripHeroCarousel({ images = [], price = 0 }: CarouselProps) {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-gray-100 font-sans"
+      className="relative mx-auto max-w-6xl px-4 py-8 font-sans"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       aria-label="Trip image carousel"
     >
-      {/* Vignette overlay – inner shadow sides + bottom fade */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        {/* Left side vignette */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black/50 to-transparent" />
-        {/* Right side vignette */}
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black/50 to-transparent" />
-        {/* Bottom-to-top fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/60 to-transparent" />
-      </div>
-
-      {/* Outer navigation arrows */}
-      <button
-        onClick={prev}
-        disabled={isBeginning}
-        aria-label="Previous slide"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/80 hover:bg-white p-3 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg transition-transform hover:scale-105"
-      >
-        <ChevronLeft className="h-6 w-6 text-body" />
-      </button>
-      <button
-        onClick={next}
-        disabled={isEnd}
-        aria-label="Next slide"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/80 hover:bg-white p-3 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg transition-transform hover:scale-105"
-      >
-        <ChevronRight className="h-6 w-6 text-body" />
-      </button>
-
-      {/* Slides container */}
-      <div className="relative h-64 sm:h-80 md:h-96 lg:h-[500px] [perspective:1000px]">
+      {/* Carousel outer wrapper with rounded shadow edge and inner-shadow vignette */}
+      <div className="relative rounded-2xl bg-black/20 shadow-2xl ring-1 ring-white/10">
+        {/* Inner shadow vignette overlay — rounded edges, inner shadow fading from sides + bottom */}
         <div
-          className="flex h-full w-full items-center justify-center"
+          className="absolute inset-0 pointer-events-none rounded-2xl"
           style={{
-            transform: `translateX(calc(-100% * ${current} * (1 + 0.15))`,
-            transition: "transform 0.4s ease-out",
+            boxShadow:
+              "inset 32px 0 32px -24px rgba(0,0,0,0.45), inset -32px 0 32px -24px rgba(0,0,0,0.45), inset 0 48px 48px -32px rgba(0,0,0,0), inset 0 -64px 80px -32px rgba(0,0,0,0.65)",
           }}
-        >
-          {displayImages.map((img, idx) => (
-            <div
-              key={idx}
-              className="relative flex-shrink-0 w-5/6 max-w-sm"
-              aria-hidden={idx !== current}
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`Slide ${current + 1} of ${slideCount}`}
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg shadow-lg">
+          aria-hidden="true"
+        />
+
+        {/* Slides container — centered, one main slide with 15% peek peeks */}
+        <div className="relative flex h-64 w-full items-center justify-center overflow-hidden sm:h-80 md:h-96 lg:h-[500px]">
+          {/* We use opacity/transform to show current as full, adjacent as peek */}
+          {displayImages.map((img, idx) => {
+            const offset = idx - current;
+            // Show main slide at full opacity; adjacent at 15% peek
+            const isVisible = Math.abs(offset) <= 1;
+            const scale = Math.abs(offset) === 1 ? 0.85 : 1;
+            const opacity = Math.abs(offset) === 1 ? 0.6 : 1;
+            const filter = Math.abs(offset) === 1 ? "blur(1px)" : "none";
+            const translate =
+              offset === 0
+                ? "translateX(0)"
+                : offset < 0
+                ? "translateX(-15%)"
+                : "translateX(15%)";
+
+            if (!isVisible) return null;
+
+            return (
+              <div
+                key={idx}
+                className="absolute inset-0 m-auto h-full w-5/6 max-w-sm rounded-lg shadow-xl"
+                style={{
+                  opacity: idx === current ? 1 : opacity,
+                  transform: `${translate} scale(${scale})`,
+                  filter,
+                  transition: "all 0.5s cubic-bezier(0.4,0,0.2,1)",
+                  pointerEvents: idx === current ? "auto" : "none",
+                }}
+                aria-roledescription="slide"
+                aria-label={`Slide ${idx + 1} of ${slideCount}`}
+              >
                 <Image
                   src={`https://cms.voltatrips.com${img.mediaDetails.filePath}`}
-                  alt={img.mediaDetails.file}
+                  alt={img.mediaDetails.file || "Trip image"}
                   fill
                   sizes="80vw"
                   className="object-cover"
                   priority={idx === 0}
                 />
               </div>
+            );
+          })}
+
+          {/* Fallback image when no images — shows a nice placeholder */}
+          {displayImages.length === 1 && displayImages[0].mediaDetails.file === "placeholder" && (
+            <div className="absolute inset-0 flex items-center justify-center text-center text-gray-400">
+              <span>No images available</span>
             </div>
+          )}
+        </div>
+
+        {/* Outer navigation arrows — large, centered on the left/right sides */}
+        <button
+          onClick={prev}
+          disabled={isBeginning}
+          aria-label="Previous slide"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-30 rounded-full bg-white/90 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed p-4 shadow-lg transition-transform hover:scale-105"
+        >
+          <ChevronLeft className="h-7 w-7 text-gray-800" />
+        </button>
+        <button
+          onClick={next}
+          disabled={isEnd}
+          aria-label="Next slide"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-30 rounded-full bg-white/90 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed p-4 shadow-lg transition-transform hover:scale-105"
+        >
+          <ChevronRight className="h-7 w-7 text-gray-800" />
+        </button>
+
+        {/* Progress dots centered at the bottom */}
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
+          {displayImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrent(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+              className="h-2.5 w-10 rounded-full transition-all"
+              style={{
+                backgroundColor:
+                  idx === current ? "#ff681a" : "rgba(255,255,255,0.4)",
+              }}
+            />
           ))}
         </div>
       </div>
 
-      {/* Progress dots */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
-        {Array.from({ length: slideCount }).map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrent(idx)}
-            aria-label={`Go to slide ${idx + 1}`}
-            className="h-2 w-8 rounded-full transition-all"
-            style={{
-              backgroundColor:
-                idx === current ? "#ff681a" : "rgba(255,255,255,0.5)",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Price badge overlay */}
+      {/* Price badge at bottom-left, overlaid on the rounded container edge */}
       {price > 0 && (
-        <div className="absolute left-4 bottom-4 z-10 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-content shadow-lg">
+        <div className="absolute bottom-4 left-4 z-20 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-content shadow-md">
           ${price} per person
         </div>
       )}
