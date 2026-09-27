@@ -20,10 +20,7 @@ type CarouselProps = {
 
 const SWIPE_DETECTION_THRESHOLD = 50;
 
-export function TripHeroCarousel({
-  images = [],
-  price = 0,
-}: CarouselProps) {
+export function TripHeroCarousel({ images = [], price = 0 }: CarouselProps) {
   const [current, setCurrent] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const isBeginning = current === 0;
@@ -31,19 +28,32 @@ export function TripHeroCarousel({
 
   // Build a full image list for slide
   const slideCount = images.length || 1;
-  const displayImages = images.length > 0 ? images : [
-    { mediaDetails: { file: "placeholder", filePath: "/placeholder.jpg", width: 1600, height: 900 } },
-  ];
+  const displayImages =
+    images.length > 0
+      ? images
+      : [
+          {
+            mediaDetails: {
+              file: "placeholder",
+              filePath: "/placeholder.jpg",
+              width: 1600,
+              height: 900,
+            },
+          },
+        ];
 
   // Navigate
   const prev = () => setCurrent((c) => (c <= 0 ? 0 : c - 1));
-  const next = () => setCurrent((c) => (c >= slideCount - 1 ? slideCount - 1 : c + 1));
+  const next = () =>
+    setCurrent((c) => (c >= slideCount - 1 ? slideCount - 1 : c + 1));
 
-  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.touches[0].clientX);
+  const handleTouchStart = (e: React.TouchEvent) =>
+    setTouchStart(e.touches[0].clientX);
   const handleTouchEnd = (e: React.TouchEvent) => {
     const delta = touchStart - e.touches[0].clientX;
     if (Math.abs(delta) > SWIPE_DETECTION_THRESHOLD) {
-      if (delta > 0) next(); else prev();
+      if (delta > 0) next();
+      else prev();
     }
     setTouchStart(0);
   };
@@ -103,7 +113,7 @@ export function TripHeroCarousel({
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg shadow-lg">
                 <Image
-                  src={`https://roam.qodeinteractive.com${img.mediaDetails.filePath}`}
+                  src={`https://cms.voltatrips.com${img.mediaDetails.filePath}`}
                   alt={img.mediaDetails.file}
                   fill
                   sizes="80vw"
@@ -125,7 +135,8 @@ export function TripHeroCarousel({
             aria-label={`Go to slide ${idx + 1}`}
             className="h-2 w-8 rounded-full transition-all"
             style={{
-              backgroundColor: idx === current ? "#ff681a" : "rgba(255,255,255,0.5)",
+              backgroundColor:
+                idx === current ? "#ff681a" : "rgba(255,255,255,0.5)",
             }}
           />
         ))}
