@@ -14,7 +14,7 @@ export const REVIEW_CRITERIA = [
  */
 export const ReviewSchema = z.object({
   name: z.string().min(1, "Your name is required."),
-  email: z.string().email("Please enter a valid email."),
+  email: z.email("Please enter a valid email."),
   rating: z
     .number()
     .min(1, "Please select a rating.")

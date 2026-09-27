@@ -51,7 +51,9 @@ export function BookingForm() {
       <DatePicker
         label="Departure date"
         value={date ? date.toISOString().split("T")[0] : ""}
-        onChange={(e) => setDate(e.target.value ? new Date(e.target.value) : undefined)}
+        onChange={(e) =>
+          setDate(e.target.value ? new Date(e.target.value) : undefined)
+        }
         error={errors.date?.message}
       />
 
