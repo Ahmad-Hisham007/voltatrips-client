@@ -112,9 +112,7 @@ function InformationTab({ trip }: { trip: Trip }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Title & Price Header */}
-      <h2 className="text-heading font-display text-2xl lg:text-3xl">
-        {trip.title}
-      </h2>
+      <h2 className="text-heading text-4xl! lg:text-3xl">{trip.title}</h2>
 
       {/* Metadata Badges */}
       <div className="flex flex-wrap gap-3 text-sm text-body">
