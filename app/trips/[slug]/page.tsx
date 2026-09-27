@@ -112,10 +112,14 @@ function InformationTab({ trip }: { trip: Trip }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Title & Price Header */}
-      <h2 className="text-heading font-display text-4xl lg:text-3xl">
-        {trip.title}
-      </h2>
-
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-heading text-4xl! lg:text-3xl block">
+          {trip.title}
+        </h2>
+        <div className="text-primary italic text-xl leading-tight font-display font-bold">
+          ${trip.tripFields.tripPrice} / per person
+        </div>
+      </div>
       {/* Metadata Badges */}
       <div className="flex flex-wrap gap-3 text-sm text-body">
         <span className="flex items-center gap-1">
