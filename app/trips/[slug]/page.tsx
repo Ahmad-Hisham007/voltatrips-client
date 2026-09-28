@@ -9,6 +9,11 @@ import { TiDocumentText } from "react-icons/ti";
 import { LuMap, LuMapPin } from "react-icons/lu";
 import { MdOutlineCameraAlt } from "react-icons/md";
 import { RiUserHeartLine } from "react-icons/ri";
+import { Check, Clock } from "lucide-react";
+import { FaRegAddressCard } from "react-icons/fa6";
+import Link from "next/link";
+import { GrMapLocation } from "react-icons/gr";
+import { IoMdClose } from "react-icons/io";
 
 export const metadata: Metadata = {
   title: "Trip Details",
@@ -42,12 +47,13 @@ export default async function TripPage({
       <TripHeroCarousel
         images={trip.tripFields.tripGallery.nodes}
         price={trip.tripFields.tripPrice}
+        duration={trip.tripFields.tripDuration}
       />
 
       {/* =========================================== */}
       {/* 2. MAIN LAYOUT: 2-column grid              */}
       {/* =========================================== */}
-      <Tabs defaultValue="information" className="w-full">
+      <Tabs defaultValue="information" className="w-full z-20 bg-base">
         {/* TabsList — gray background bar with active indicator */}
         <div className="bg-gray-100">
           <TabsList className="flex flex-col sm:flex-row max-w-325 md:mx-auto mx-12 bg-transparent border-0! outline-0 shadow-none">
@@ -64,7 +70,7 @@ export default async function TripPage({
         </div>
 
         {/* LEFT COLUMN ~72% (tabs wrapper) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:px-8 pb-27.5 max-w-325 mx-auto md:pt-20.5 pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 pb-27.5 max-w-325 mx-auto md:pt-20.5 pt-10">
           <section className="lg:col-span-9 px-5">
             <TabsContent value="information">
               <InformationTab trip={trip} />
@@ -85,8 +91,6 @@ export default async function TripPage({
             <TabsContent value="reviews">
               <ReviewsTab />
             </TabsContent>
-            {/* Empty wrapper that matches your design structure */}
-            <div className="bg-gray-100 border border-border rounded-lg overflow-hidden"></div>
           </section>
 
           {/* RIGHT COLUMN ~28% (sticky sidebar) */}
@@ -96,9 +100,6 @@ export default async function TripPage({
             </div>
           </aside>
         </div>
-
-        {/* Tab Content – boxed card inside tabs */}
-        <div className="p-4 sm:p-6 bg-surface rounded-b-lg"></div>
       </Tabs>
     </div>
   );
@@ -110,83 +111,90 @@ export default async function TripPage({
 
 function InformationTab({ trip }: { trip: Trip }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
       {/* Title & Price Header */}
-      <div className="flex items-baseline justify-between">
+      <div className="mb-5">
         <h2 className="text-heading text-4xl! lg:text-3xl block">
           {trip.title}
         </h2>
-        <div className="text-primary italic text-xl leading-tight font-display font-bold">
+        <div className="text-primary italic text-xl leading-tight font-display font-bold mt-2.5">
           ${trip.tripFields.tripPrice} / per person
         </div>
       </div>
-      {/* Metadata Badges */}
-      <div className="flex flex-wrap gap-3 text-sm text-body">
-        <span className="flex items-center gap-1">
-          📅 {trip.tripFields.tripDuration} Days
-        </span>
-        <span className="flex items-center gap-1">
-          👥 {trip.tripFields.tripAgeRequirement}
-        </span>
-        <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-          {trip.slug}
-        </span>
-      </div>
-
-      {/* Key Details Table */}
-      <dl className="divide-y divide-border">
-        <div className="flex justify-between py-2">
-          <dt className="text-muted">Departure</dt>
-          <dd className="text-right text-body">{trip.tripFields.departure}</dd>
-        </div>
-        <div className="flex justify-between py-2">
-          <dt className="text-muted">Departure Time</dt>
-          <dd className="text-right text-body">
-            {trip.tripFields.departureTime}
-          </dd>
-        </div>
-        <div className="flex justify-between py-2">
-          <dt className="text-muted">Dress Code</dt>
-          <dd className="text-right text-body">{trip.tripFields.dressCode}</dd>
-        </div>
-      </dl>
-
-      {/* Included / Not Included Lists */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <h3 className="font-medium text-heading mb-2 flex items-center gap-2">
-            <span className="text-green-500">✓</span> What&apos;s Included
-          </h3>
-          <ul className="list-none space-y-1 text-body">
-            {trip.tripFields.tripDetails.whatsIncluded.map((item, i) => (
-              <li key={i}>• {item.item}</li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="font-medium text-heading mb-2 flex items-center gap-2">
-            <span className="text-muted">✕</span> What&apos;s Not Included
-          </h3>
-          <ul className="list-none space-y-1 text-body">
-            {trip.tripFields.tripDetails.whatsNotIncluded.map((item, i) => (
-              <li key={i}>• {item.item}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Short Description */}
-      <p className="text-body">
-        {trip.tripFields.tripDetails.tripShortDescription}
-      </p>
-
-      {/* Full Description */}
-      <div
-        className="prose prose-sm max-w-none text-body"
+      <p
         dangerouslySetInnerHTML={{
           __html: trip.tripFields.tripDetails.tripFullDescription,
         }}
       />
+      {/* Metadata Badges */}
+      <div className="flex flex-wrap gap-3 text-sm text-body">
+        <span className="flex items-center gap-2">
+          <Clock className="w-4" /> {trip.tripFields.tripDuration} Days
+        </span>
+        <span className="flex items-center gap-2">
+          <FaRegAddressCard /> {trip.tripFields.tripAgeRequirement} age
+        </span>
+        <span className="inline-flex gap-2 items-center rounded-lg bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
+          <GrMapLocation className="w-4 h-4" />{" "}
+          <Link href={"#"}> Thailand</Link>
+        </span>
+      </div>
+
+      {/* Key Details Table */}
+      <dl className="divide-y divide-border border-y border-gray-200 mt-5">
+        <div className="flex items-center justify-start py-6">
+          <dt className="text-[#303030] font-bold text-[17px] flex-1 ml-5">
+            Departure
+          </dt>
+          <dd className="text-left text-body flex-2">
+            {trip.tripFields.departure}
+          </dd>
+        </div>
+        <div className="flex justify-start items-center py-6">
+          <dt className="text-[#303030] font-bold text-[17px] flex-1 ml-5">
+            Departure Time
+          </dt>
+          <dd className="text-left text-body flex-2">
+            {trip.tripFields.departureTime}
+          </dd>
+        </div>
+        <div className="flex justify-start items-center py-6">
+          <dt className="text-[#303030] font-bold text-[17px] flex-1 ml-5">
+            Dress Code
+          </dt>
+          <dd className="text-left text-body flex-2">
+            {trip.tripFields.dressCode}
+          </dd>
+        </div>
+        <div className="flex justify-start items-center py-6">
+          <dt className="text-[#303030] font-bold text-[17px] flex-1 ml-5">
+            What&apos;s Included
+          </dt>
+          <dd className="text-left text-body flex-2">
+            <ul className="list-none grid grid-cols-2 gap-1 text-body">
+              {trip.tripFields.tripDetails.whatsIncluded.map((item, i) => (
+                <li className="flex items-center gap-2" key={i}>
+                  <Check className="text-primary w-4" /> {item.item}
+                </li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+        <div className="flex justify-start items-center py-6">
+          <dt className="text-[#303030] font-bold text-[17px] flex-1 ml-5">
+            What&apos;s Not Included
+          </dt>
+          <dd className="text-left text-body flex-2">
+            <ul className="list-none grid grid-cols-2 gap-1 text-body">
+              {trip.tripFields.tripDetails.whatsNotIncluded.map((item, i) => (
+                <li className="flex items-center gap-2" key={i}>
+                  <IoMdClose className="text-primary w-4" /> {item.item}
+                </li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      </dl>
     </div>
   );
 }
@@ -277,7 +285,7 @@ function GalleryTab({
           <img
             src={
               img.mediaDetails.filePath.startsWith("/")
-                ? `https://roam.qodeinteractive.com${img.mediaDetails.filePath}`
+                ? `https://cms.voltatrips.com${img.mediaDetails.filePath}`
                 : img.mediaDetails.filePath
             }
             alt="Gallery image"
