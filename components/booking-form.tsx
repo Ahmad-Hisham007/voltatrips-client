@@ -3,135 +3,198 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Pencil, Mail, Phone, Calendar, Ticket } from "lucide-react";
 
-import { BookingSchema, type BookingFormData } from "@/lib/validations/booking";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Select } from "@/components/ui/select";
-import { Counter } from "@/components/ui/counter";
+import {
+  BookingFormInput,
+  BookingSchema,
+  type BookingFormData,
+} from "@/lib/validations/booking";
 
-/**
- * Sidebar booking form.
- * Reuses the shared BookingSchema so server & client rules match.
- * On submit it calls a Server Action (to be created in the auth/checkout
- * phase) which re-validates with the same schema.
- */
 export function BookingForm() {
-  const [date, setDate] = useState<Date>();
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
-  const [infants, setInfants] = useState(0);
-
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
-  } = useForm<BookingFormData>({
+  } = useForm<BookingFormInput, undefined, BookingFormData>({
     resolver: zodResolver(BookingSchema),
     defaultValues: {
-      adults: 2,
+      name: "",
+      email: "",
+      confirmEmail: "",
+      phone: "",
+      message: "",
+      time: "10:00",
+      adults: 1,
       children: 0,
       infants: 0,
-      time: "10:00",
+      date: undefined as unknown as Date,
+      tickets: 1,
     },
   });
+  const dateValue = watch("date");
 
-  const onSubmit = async (data: BookingFormData) => {
-    // Placeholder — wire to Server Action in a later phase.
+  const isDateActive = !!dateValue;
+
+  const onSubmit = (data: BookingFormData) => {
+    // Placeholder — Server Action integration
     console.log("Booking submit:", data);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-4"
-      aria-label="Book this trip"
-    >
-      <DatePicker
-        label="Departure date"
-        value={date ? date.toISOString().split("T")[0] : ""}
-        onChange={(e) =>
-          setDate(e.target.value ? new Date(e.target.value) : undefined)
-        }
-        error={errors.date?.message}
-      />
+    <div className="w-full bg-[url('/background-booking-img-1.jpg')] p-6 sm:p-8 flex flex-col items-center">
+      {/* Title */}
+      <h2 className="text-2xl sm:text-[28px] font-bold text-heading text-center mb-6 font-sans">
+        Book this tour
+      </h2>
 
-      <Select
-        label="Departure time"
-        error={errors.time?.message}
-        defaultValue="10:00"
-        {...register("time")}
-      />
-
-      <div className="space-y-2">
-        <Counter
-          label="Adults"
-          value={adults}
-          min={1}
-          max={20}
-          onChange={(v) => {
-            setAdults(v);
-          }}
-        />
-        <Counter
-          label="Children"
-          value={children}
-          min={0}
-          max={20}
-          onChange={setChildren}
-        />
-        <Counter
-          label="Infants"
-          value={infants}
-          min={0}
-          max={20}
-          onChange={setInfants}
-        />
-
-        {/* keep form state in sync with Counter for validation */}
-        <input type="hidden" {...register("adults")} value={adults} />
-        <input type="hidden" {...register("children")} value={children} />
-        <input type="hidden" {...register("infants")} value={infants} />
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Input
-          placeholder="First name"
-          error={errors.firstName?.message}
-          {...register("firstName")}
-        />
-        <Input
-          placeholder="Last name"
-          error={errors.lastName?.message}
-          {...register("lastName")}
-        />
-        <Input
-          type="email"
-          placeholder="Email"
-          error={errors.email?.message}
-          {...register("email")}
-        />
-        <Input
-          type="tel"
-          placeholder="Phone"
-          error={errors.phone?.message}
-          {...register("phone")}
-        />
-      </div>
-
-      <input type="hidden" {...register("date")} />
-
-      <Button
-        type="submit"
-        variant="primary"
-        size="lg"
-        disabled={isSubmitting}
-        className="w-full"
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full space-y-3.5"
+        aria-label="Book this tour"
       >
-        {isSubmitting ? "Booking…" : "Book Now"}
-      </Button>
-    </form>
+        {/* Name Field */}
+        <div>
+          <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Pencil className="w-4 h-4 text-primary absolute left-4 shrink-0" />
+            <input
+              type="text"
+              placeholder="Name *"
+              className="w-full py-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans"
+              {...register("name")}
+            />
+          </div>
+          {errors.name?.message && (
+            <p className="text-xs text-error mt-1">{errors.name.message}</p>
+          )}
+        </div>
+
+        {/* Email Field */}
+        <div>
+          <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Mail className="w-4 h-4 text-primary absolute left-4 shrink-0" />
+            <input
+              type="email"
+              placeholder="Email *"
+              className="w-full py-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans"
+              {...register("email")}
+            />
+          </div>
+          {errors.email?.message && (
+            <p className="text-xs text-error mt-1">{errors.email.message}</p>
+          )}
+        </div>
+
+        {/* Confirm Email Field */}
+        <div>
+          <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Mail className="w-4 h-4 text-primary absolute left-4 shrink-0" />
+            <input
+              type="email"
+              placeholder="Confirm Email *"
+              className="w-full py-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans"
+              {...register("confirmEmail")}
+            />
+          </div>
+          {errors.confirmEmail?.message && (
+            <p className="text-xs text-error mt-1">
+              {errors.confirmEmail.message}
+            </p>
+          )}
+        </div>
+
+        {/* Phone Field */}
+        <div>
+          <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Phone className="w-4 h-4 text-primary absolute left-4 shrink-0" />
+            <input
+              type="tel"
+              placeholder="Phone"
+              className="w-full py-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans"
+              {...register("phone")}
+            />
+          </div>
+          {errors.phone?.message && (
+            <p className="text-xs text-error mt-1">{errors.phone.message}</p>
+          )}
+        </div>
+
+        {/* Date Field */}
+        <div>
+          <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Calendar className="w-4 h-4 text-primary absolute left-4 shrink-0 pointer-events-none" />
+            <input
+              type={isDateActive ? "date" : "text"}
+              placeholder="dd-mm-yy *"
+              className="w-full py-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans uppercase"
+              onFocus={(e) => {
+                setValue("date", " ", { shouldValidate: false });
+                // Trigger RHF change if needed
+              }}
+              {...register("date", {
+                onBlur: (e) => {
+                  if (!e.target.value.trim()) {
+                    setValue("date", "");
+                  }
+                },
+              })}
+            />
+          </div>
+          {errors.date?.message && (
+            <p className="text-xs text-error mt-1">{errors.date.message}</p>
+          )}
+        </div>
+
+        {/* Number of Tickets Field */}
+        <div>
+          <div className="relative flex items-center bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Ticket className="w-4 h-4 text-primary absolute left-4 shrink-0" />
+            <input
+              type="number"
+              min={1}
+              placeholder="Number of tickets *"
+              className="w-full py-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans"
+              {...register("tickets")}
+            />
+          </div>
+          {errors.tickets?.message && (
+            <p className="text-xs text-error mt-1">{errors.tickets.message}</p>
+          )}
+        </div>
+
+        {/* Message Field */}
+        <div>
+          <div className="relative flex bg-white border border-gray-200 focus-within:border-primary transition-colors">
+            <Pencil className="w-4 h-4 text-primary absolute left-4 top-4 shrink-0" />
+            <textarea
+              rows={4}
+              placeholder="Message"
+              className="w-full pt-3.5 pb-3.5 pl-11 pr-4 text-body text-sm bg-transparent outline-none placeholder:text-gray-400 font-sans resize-y"
+              {...register("message")}
+            />
+          </div>
+          {errors.message?.message && (
+            <p className="text-xs text-error mt-1">{errors.message.message}</p>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full mt-2 bg-white hover:bg-gray-50 text-heading border border-gray-200 font-bold tracking-widest text-sm py-4 px-4 transition-colors cursor-pointer uppercase shadow-2xs disabled:opacity-50"
+        >
+          {isSubmitting ? "Checking..." : "AVAILABILITY"}
+        </button>
+      </form>
+
+      {/* Footer Disclaimer */}
+      <p className="mt-6 text-sm text-body text-center font-sans font-light">
+        Please log in to book a tour
+      </p>
+    </div>
   );
 }
 

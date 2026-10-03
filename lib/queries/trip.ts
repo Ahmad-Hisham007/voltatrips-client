@@ -37,6 +37,8 @@ export type TripFields = {
   };
   tripItinerary: Array<TripItineraryItem>;
   tripLocation: string;
+  tripLocationSubtitle: string;
+  tripLocationDescription: string;
   tripPrice: number;
   tripSku: string;
 };
@@ -108,6 +110,8 @@ export async function fetchTrip(
             title
           }
           tripLocation
+          tripLocationDescription
+          tripLocationSubtitle
           tripPrice
           tripSku
         }

@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 /**
  * Shared booking form schema.
  * Used BOTH:
@@ -7,24 +6,30 @@ import { z } from "zod";
  *   - in the future checkout Server Action (server re-validation)
  * Keeping it in one place guarantees the same rules run everywhere.
  */
-export const BookingSchema = z.object({
-  date: z
-    .date({ error: (i) => (i.code === "invalid_type" ? "Please choose a date." : i.message) }),
-  time: z.string().min(1, "Please choose a departure time."),
-  adults: z
-    .number()
-    .min(1, "At least 1 adult is required.")
-    .max(20, "Maximum 20 guests."),
-  children: z.number().min(0).max(20, "Maximum 20 children."),
-  infants: z.number().min(0).max(20, "Maximum 20 infants."),
+export const BookingSchema = z
+  .object({
+    name: z.string().min(1, "Name is required."),
+    email: z.email("Please enter a valid email address."),
+    confirmEmail: z.email("Please enter a valid email address."),
+    phone: z.string().optional(),
+    date: z.coerce.date({
+      message: "Please choose a valid date.",
+    }),
+    tickets: z.coerce
+      .number({ message: "Number of tickets must be a number." })
+      .min(1, "At least 1 ticket is required."),
+    message: z.string().optional(),
 
-  // Passenger contact details — required for checkout, optional in the
-  // sidebar teaser form (we keep them in scope so the same schema drives
-  // both steps).
-  firstName: z.string().min(1, "First name required."),
-  lastName: z.string().min(1, "Last name required."),
-  email: z.string().email("Please enter a valid email."),
-  phone: z.string().min(1, "Phone number required."),
-});
+    // Defaults for server compatibility / full checkout step
+    time: z.string().default("10:00"),
+    adults: z.number().default(1),
+    children: z.number().default(0),
+    infants: z.number().default(0),
+  })
+  .refine((data) => data.email === data.confirmEmail, {
+    message: "Emails do not match.",
+    path: ["confirmEmail"],
+  });
 
 export type BookingFormData = z.infer<typeof BookingSchema>;
+export type BookingFormInput = z.input<typeof BookingSchema>;
