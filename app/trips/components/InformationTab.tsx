@@ -22,6 +22,13 @@ export default function InformationTab({ trip }: { trip: Trip }) {
           __html: trip.tripFields.tripDetails.tripFullDescription,
         }}
       />
+      <div
+        className="trip-content hidden"
+        dangerouslySetInnerHTML={{
+          __html: trip.content || "",
+        }}
+      />
+
       {/* Metadata Badges */}
       <div className="flex flex-wrap gap-3 text-sm text-body">
         <span className="flex items-center gap-2">

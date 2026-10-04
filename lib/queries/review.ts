@@ -48,6 +48,7 @@ const GET_TRIP_WITH_REVIEWS = `
           }
         }
       }
+
     }
   }
 `;

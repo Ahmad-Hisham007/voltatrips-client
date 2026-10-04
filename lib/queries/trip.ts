@@ -50,6 +50,7 @@ export type TripQuery = {
     id: string;
     databaseId: number;
     tripFields: TripFields;
+    content?: string | TrustedHTML | undefined;
   };
 };
 
@@ -73,6 +74,7 @@ export async function fetchTrip(
         slug
         id
         databaseId
+        content(format: RENDERED)
         tripFields {
           departure
           departureTime
