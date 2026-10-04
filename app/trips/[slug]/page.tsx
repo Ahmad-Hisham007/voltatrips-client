@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { type Metadata } from "next";
 
-import { fetchTrip, type Trip } from "@/lib/queries/trip";
+import { fetchTrip } from "@/lib/queries/trip";
+import { buildReviewSummary, fetchTripReviews } from "@/lib/queries/review";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BookingForm } from "@/components/booking-form";
 import { TripHeroCarousel } from "@/components/trip-hero-carousel";
@@ -43,9 +44,14 @@ export default async function TripPage({
   params: Promise<{ slug: string }>;
 }) {
   // slug not used - ID 31 is hardcoded for initial dev
-  const trip = await fetchTrip(31);
+  const [trip, reviewComments] = await Promise.all([
+    fetchTrip(31),
+    fetchTripReviews(31),
+  ]);
 
   if (!trip) notFound();
+
+  const reviewSummary = buildReviewSummary(reviewComments);
 
   return (
     <div className="flex flex-col">
@@ -103,7 +109,11 @@ export default async function TripPage({
             </TabsContent>
 
             <TabsContent value="reviews">
-              <ReviewsTab />
+              <ReviewsTab
+                trip={trip}
+                comments={reviewComments}
+                summary={reviewSummary}
+              />
             </TabsContent>
           </section>
 

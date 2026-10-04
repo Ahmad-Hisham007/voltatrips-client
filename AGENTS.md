@@ -114,12 +114,13 @@ These are explicitly out of scope for now and only noted to prevent accidental i
   - `TourPlanTab.tsx` — vertical timeline with circular day badges, dashed connector (NOT accordion)
   - `LocationTab.tsx` — Google Maps iframe + subtitle/description from WP fields
   - `GalleryTab.tsx` — responsive grid with hover zoom (NO lightbox yet — deferred)
-  - `ReviewsTab.tsx` — placeholder only
+  - `ReviewsTab.tsx` — Server Component orchestrating `reviews/*` sub-components (summary block, rating bars, comment list) + the client `ReviewForm` island
 - ✅ Booking form: `components/booking-form.tsx` (RHF + Zod, inline inputs, NOT using Counter/Select primitives)
 - ✅ GraphQL: `lib/queries/trip.ts` with typed response and cache tags
 - ❌ Missing: Gallery lightbox (modal exists but not integrated)
 - ❌ Missing: `app/trips/[slug]/loading.tsx` skeleton
-- ❌ Deferred: Reviews tab content, dynamic slug routing (ID 31 hardcoded)
+- ✅ Reviews: `lib/queries/review.ts` (fetch + `buildReviewSummary`), `lib/actions/review.ts` (Server Action → `createComment`), `types/review.ts`, 5-criteria `CreateReviewSchema`
+- ❌ Deferred: dynamic slug routing (ID 31 hardcoded)
 
 ## Working agreements
 

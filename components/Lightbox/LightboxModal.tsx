@@ -14,6 +14,7 @@ import {
   GalleryImage,
   getImageUrl,
 } from "../../app/trips/components/GalleryTab";
+import { ChevronLeft, ChevronRight, Expand, X } from "lucide-react";
 
 interface LightboxModalProps {
   images: GalleryImage[];
@@ -60,19 +61,7 @@ export default function LightboxModal({
           className="absolute right-3 top-3 z-20 rounded p-1.5 text-white bg-black/40 hover:bg-black/60 transition-colors"
           title="Toggle Fullscreen"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-            />
-          </svg>
+          <Expand className="h-4 w-4" />
         </button>
 
         {/* Swiper Image Container */}
@@ -115,42 +104,18 @@ export default function LightboxModal({
             <button
               onClick={() => swiperInstance?.slidePrev()}
               disabled={currentIndex === 0}
-              className="p-1 text-gray-600 hover:text-black disabled:opacity-30 transition-colors"
+              className="p-1 text-gray-600 hover:text-black disabled:opacity-30 transition-colors cursor-pointer"
               aria-label="Previous Image"
             >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
+              <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={() => swiperInstance?.slideNext()}
               disabled={currentIndex === images.length - 1}
-              className="p-1 text-gray-600 hover:text-black disabled:opacity-30 transition-colors"
+              className="p-1 text-gray-600 hover:text-black disabled:opacity-30 transition-colors cursor-pointer"
               aria-label="Next Image"
             >
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
 
@@ -162,22 +127,10 @@ export default function LightboxModal({
           {/* Close Button (X) */}
           <button
             onClick={onClose}
-            className="p-1 text-gray-600 hover:text-black transition-colors"
+            className="p-1 text-gray-600 hover:text-black transition-colors cursor-pointer"
             aria-label="Close Lightbox"
           >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.8}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X className="h-5 w-5" />
           </button>
         </div>
       </div>
