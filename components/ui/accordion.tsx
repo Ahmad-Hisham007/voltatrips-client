@@ -1,3 +1,5 @@
+"use client";
+
 import * as RadixAccordion from "@radix-ui/react-accordion";
 import type { AccordionMultipleProps } from "@radix-ui/react-accordion";
 import type { ComponentProps } from "react";

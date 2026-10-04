@@ -32,7 +32,7 @@ export default function InformationTab({ trip }: { trip: Trip }) {
         </span>
         <span className="inline-flex gap-2 items-center rounded-lg bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
           <GrMapLocation className="w-4 h-4" />{" "}
-          <Link href={"#"}> Thailand</Link>
+          <Link href={"#"}>{trip.tripFields.tripLocation}</Link>
         </span>
       </div>
 

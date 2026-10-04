@@ -1,34 +1,37 @@
 import { z } from "zod";
 
-export const REVIEW_CRITERIA = [
-  "Accommodation",
-  "Meals",
-  "Transport",
-  "Value for Money",
-] as const;
-
 /**
- * Review form schema — powers the Reviews tab submission form.
- * Shared between the client form (React Hook Form) and a future
- * Server Action for persisting to WordPress.
+ * Review submission contracts — spec.md §5 (frozen).
+ *
+ * Replaces the former 4-criteria `ReviewSchema` + separate `rating`.
+ * Five criteria, each 1–5. `commentOn` is the WP post database ID and is
+ * supplied by the server/page (D4) — never a DOM input.
+ *
+ * Note: `authorEmail` uses `z.email()` (Zod v4) to match the rest of the
+ * codebase; spec.md's `z.string().email()` is the deprecated v3 spelling of
+ * the same rule.
  */
-export const ReviewSchema = z.object({
-  name: z.string().min(1, "Your name is required."),
-  email: z.email("Please enter a valid email."),
-  rating: z
+export const ReviewRatingsSchema = z.object({
+  accommodationRating: z
     .number()
-    .min(1, "Please select a rating.")
-    .max(5, "Maximum rating is 5."),
-  review: z.string().min(10, "Review must be at least 10 characters."),
-  // per-criterion star rating (1-5), matching the WP review model
-  criteria: z
-    .object(
-      REVIEW_CRITERIA.reduce(
-        (acc, c) => ({ ...acc, [c]: z.number().min(0).max(5) }),
-        {} as Record<string, z.ZodNumber>,
-      ),
-    )
-    .strict(),
+    .min(1, "Please select Accommodation rating")
+    .max(5),
+  mealsRating: z.number().min(1, "Please select Meals rating").max(5),
+  overallRating: z.number().min(1, "Please select Overall rating").max(5),
+  transportRating: z.number().min(1, "Please select Transport rating").max(5),
+  valueForMoneyRating: z
+    .number()
+    .min(1, "Please select Value for Money rating")
+    .max(5),
 });
 
-export type ReviewFormData = z.infer<typeof ReviewSchema>;
+export const CreateReviewSchema = z.object({
+  commentOn: z.number().min(1),
+  content: z.string().min(10, "Comment must be at least 10 characters long"),
+  author: z.string().min(2, "Name is required"),
+  authorEmail: z.email("Please enter a valid email address"),
+  saveInfo: z.boolean().optional().default(false),
+  reviewRatings: ReviewRatingsSchema,
+});
+
+export type CreateReviewInput = z.infer<typeof CreateReviewSchema>;
