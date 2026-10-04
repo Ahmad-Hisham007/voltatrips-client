@@ -48,9 +48,17 @@ export interface TripReviewSummaryData {
  * `ratingKey` indexes ReviewRatings.
  */
 export const REVIEW_CRITERIA = [
-  { key: "accommodation", ratingKey: "accommodationRating", label: "Accommodation" },
+  {
+    key: "accommodation",
+    ratingKey: "accommodationRating",
+    label: "Accommodation",
+  },
   { key: "meals", ratingKey: "mealsRating", label: "Meals" },
   { key: "overall", ratingKey: "overallRating", label: "Overall" },
   { key: "transport", ratingKey: "transportRating", label: "Transport" },
-  { key: "valueForMoney", ratingKey: "valueForMoneyRating", label: "Value for Money" },
+  {
+    key: "valueForMoney",
+    ratingKey: "valueForMoneyRating",
+    label: "Value for Money",
+  },
 ] as const;

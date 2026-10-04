@@ -28,7 +28,7 @@ const GET_TRIP_WITH_REVIEWS = `
         nodes {
           id
           databaseId
-          content(format: RAW)
+          content(format: RENDERED)
           date
           author {
             node {
@@ -69,7 +69,10 @@ export async function fetchTripReviews(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query: GET_TRIP_WITH_REVIEWS, variables: { id: String(id) } }),
+    body: JSON.stringify({
+      query: GET_TRIP_WITH_REVIEWS,
+      variables: { id: String(id) },
+    }),
     next: { revalidate: cacheLifeSeconds, tags: [`trip:${id}:reviews`] },
   });
 

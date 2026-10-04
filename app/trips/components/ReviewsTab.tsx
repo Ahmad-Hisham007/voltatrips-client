@@ -1,8 +1,5 @@
 import type { Trip } from "@/lib/queries/trip";
-import type {
-  ReviewCommentNode,
-  TripReviewSummaryData,
-} from "@/types/review";
+import type { ReviewCommentNode, TripReviewSummaryData } from "@/types/review";
 import { ReviewForm } from "@/components/review-form";
 import { ReviewSummaryBlock } from "./reviews/ReviewSummaryBlock";
 import { ReviewList } from "./reviews/ReviewList";
@@ -27,7 +24,7 @@ function ReviewsTab({ trip, comments, summary }: ReviewsTabProps) {
         <div>
           <h2
             id="reviews-summary-heading"
-            className="font-display text-2xl font-bold text-heading lg:text-3xl"
+            className="text-2xl font-bold text-heading lg:text-3xl"
           >
             Customer Reviews
           </h2>
@@ -46,7 +43,7 @@ function ReviewsTab({ trip, comments, summary }: ReviewsTabProps) {
       <section aria-labelledby="reviews-list-heading" className="space-y-6">
         <h3
           id="reviews-list-heading"
-          className="font-display text-xl font-bold text-heading"
+          className="text-2xl  font-bold text-heading"
         >
           What travelers say
         </h3>
@@ -60,14 +57,10 @@ function ReviewsTab({ trip, comments, summary }: ReviewsTabProps) {
         <div>
           <h3
             id="review-form-heading"
-            className="font-display text-xl font-bold text-heading lg:text-2xl"
+            className="text-2xl font-bold text-heading"
           >
             Leave a Reply
           </h3>
-          <p className="mt-1 text-sm text-body">
-            Your email address will not be published. Required fields are
-            marked <span aria-hidden="true">*</span>
-          </p>
         </div>
         <ReviewForm commentOn={trip.databaseId} />
       </section>

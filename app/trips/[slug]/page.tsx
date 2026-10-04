@@ -118,7 +118,7 @@ export default async function TripPage({
           </section>
 
           {/* RIGHT COLUMN ~28% (sticky sidebar) */}
-          <aside className="lg:col-span-3 px-5">
+          <aside className="lg:col-span-3 px-5 md:md-0 mt-5">
             <div className="sticky top-24">
               <BookingForm />
             </div>
@@ -128,7 +128,3 @@ export default async function TripPage({
     </div>
   );
 }
-
-// ===========================================================
-// Individual Tab Components (server components)
-// ===========================================================

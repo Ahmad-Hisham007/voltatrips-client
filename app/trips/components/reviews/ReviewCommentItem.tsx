@@ -1,12 +1,14 @@
 import Image from "next/image";
-
 import { StarRating } from "@/components/ui/star-rating";
 import { REVIEW_CRITERIA, type ReviewCommentNode } from "@/types/review";
 
-// Explicit locale keeps SSR output deterministic (design §4.2).
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  dateStyle: "long",
-  timeStyle: "short",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
 });
 
 function initialsOf(name: string): string {
@@ -18,67 +20,80 @@ function initialsOf(name: string): string {
     .join("");
 }
 
-/**
- * A single approved review: avatar (Gravatar via <Image/>, initials
- * fallback), author + date, raw WP HTML body, and the five-criterion
- * star grid. No typography plugin is installed, so the HTML body is
- * styled with arbitrary descendant variants instead of `prose`.
- * Server Component.
- */
 export function ReviewCommentItem({ comment }: { comment: ReviewCommentNode }) {
   const { author, reviewRatings } = comment;
   const avatarUrl = author.node.avatar?.url;
 
   return (
-    <article className="grid gap-4 sm:grid-cols-[60px_1fr]">
-      <div className="flex h-15 w-15 shrink-0 items-center justify-center overflow-hidden rounded-full bg-subtle">
+    <article className="flex gap-5 items-start py-8">
+      {/* 1. Left Avatar */}
+      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-gray-200">
         {avatarUrl ? (
           <Image
             src={avatarUrl}
             alt={`${author.node.name}'s avatar`}
-            width={60}
-            height={60}
-            sizes="60px"
+            width={64}
+            height={64}
             className="h-full w-full object-cover"
           />
         ) : (
-          <span className="text-sm font-semibold text-heading">
+          <div className="flex h-full w-full items-center justify-center font-bold text-gray-500">
             {initialsOf(author.node.name)}
-          </span>
+          </div>
         )}
       </div>
 
-      <div className="grid gap-3">
-        <header className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-          <h4 className="text-base font-semibold text-heading">
+      {/* 2. Content Body & Details */}
+      <div className="flex-1 space-y-3 pt-0.5">
+        <div>
+          <h4 className="text-[25px] font-bold text-gray-900 leading-tight">
             {author.node.name}
           </h4>
-          <time dateTime={comment.date} className="text-xs text-muted">
+          <p className="text-[15px] font-light text-body leading-relaxed mt-1">
             {dateFormatter.format(new Date(comment.date))}
-          </time>
-        </header>
+          </p>
+        </div>
 
+        {/* Comment HTML text body */}
         <div
-          className="max-w-none text-sm leading-relaxed text-body [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-2 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-5"
+          className="text-[15px] text-body leading-relaxed max-w-4xl"
           dangerouslySetInnerHTML={{ __html: comment.content }}
         />
 
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-2 md:grid-cols-3">
-          {REVIEW_CRITERIA.map((criterion) => (
-            <div
-              key={criterion.key}
-              className="flex items-center justify-between gap-2"
-            >
-              <dt className="text-xs text-muted">{criterion.label}</dt>
-              <dd>
+        {/* 3. Criteria Stars Layout - Exact 3-column top, 2-column bottom match */}
+        <div className="pt-2">
+          {/* Row 1: Accommodation, Meals, Overall */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-2 max-w-3xl">
+            {REVIEW_CRITERIA.slice(0, 3).map((criterion) => (
+              <div key={criterion.key} className="flex items-center gap-2">
+                <span className="text-[17px] font-bold text-gray-900 leading-normal whitespace-nowrap">
+                  {criterion.label}
+                </span>
                 <StarRating
                   value={reviewRatings[criterion.ratingKey]}
                   size={14}
+                  className="text-primary"
                 />
-              </dd>
-            </div>
-          ))}
-        </dl>
+              </div>
+            ))}
+          </div>
+
+          {/* Row 2: Transport, Value for Money */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-2 max-w-3xl mt-2">
+            {REVIEW_CRITERIA.slice(3, 5).map((criterion) => (
+              <div key={criterion.key} className="flex items-center gap-2">
+                <span className="text-[17px] font-bold text-gray-900 leading-normal whitespace-nowrap">
+                  {criterion.label}
+                </span>
+                <StarRating
+                  value={reviewRatings[criterion.ratingKey]}
+                  size={14}
+                  className="text-primary"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </article>
   );

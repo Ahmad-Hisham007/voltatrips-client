@@ -140,7 +140,7 @@ export function StarRating({
           >
             <Star
               size={size}
-              fill={filled ? "currentColor" : "none"}
+              fill={filled ? "var(--color-primary)" : "none"}
               color={filled ? "var(--color-primary)" : "var(--color-muted)"}
               strokeWidth={1.5}
               className="pointer-events-none"
