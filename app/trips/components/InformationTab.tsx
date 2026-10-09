@@ -17,7 +17,7 @@ export default function InformationTab({ trip }: { trip: Trip }) {
           ${trip.tripFields.tripPrice} / per person
         </div>
       </div>
-      <p
+      <div
         dangerouslySetInnerHTML={{
           __html: trip.tripFields.tripDetails.tripFullDescription,
         }}
