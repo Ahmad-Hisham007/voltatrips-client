@@ -24,7 +24,7 @@ async function handleRevalidate(request: NextRequest) {
   );
 
   // Secret token validation
-  if (secret !== process.env.MY_REVALIDATE_SECRET) {
+  if (secret !== process.env.NEXTCache_REVALIDATE_SECRET) {
     console.error("[Revalidate Error] Invalid or missing secret token!");
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
