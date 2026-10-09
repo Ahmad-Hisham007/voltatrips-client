@@ -61,7 +61,9 @@ export default async function TripPage({
       <TripHeroCarousel
         images={trip.tripFields.tripGallery.nodes}
         price={trip.tripFields.tripPrice}
+        title={trip.title}
         duration={trip.tripFields.tripDuration}
+        rating={reviewSummary.averageRating}
       />
 
       {/* =========================================== */}
