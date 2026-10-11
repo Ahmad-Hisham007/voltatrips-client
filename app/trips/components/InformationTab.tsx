@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FaRegAddressCard } from "react-icons/fa6";
 import { GrMapLocation } from "react-icons/gr";
 import { IoMdClose } from "react-icons/io";
+import StrippedFullDescription from "./strippedFullDescription";
 
 export default function InformationTab({ trip }: { trip: Trip }) {
   return (
@@ -17,10 +18,8 @@ export default function InformationTab({ trip }: { trip: Trip }) {
           ${trip.tripFields.tripPrice} / per person
         </div>
       </div>
-      <div
-        dangerouslySetInnerHTML={{
-          __html: trip.tripFields.tripDetails.tripFullDescription,
-        }}
+      <StrippedFullDescription
+        tripFullDescription={trip.tripFields.tripDetails.tripFullDescription}
       />
       <div
         className="trip-content hidden"

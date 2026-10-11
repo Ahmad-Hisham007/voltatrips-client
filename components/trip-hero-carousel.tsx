@@ -140,13 +140,13 @@ export function TripHeroCarousel({
       </div>
 
       {/* Price badge */}
-      {price > 0 && (
+      {price && price > 0 && (
         <div className="absolute bottom-4 z-30  px-4 italic font-display md:text-xl text-[16px] font-extrabold text-white ">
           Price {price} / {duration} days
         </div>
       )}
       {/* Rating badge */}
-      {rating && (
+      {rating && rating > 0 ? (
         <div className="absolute bottom-4 right-0 z-30  px-4 italic font-display md:text-xl text-[16px] font-extrabold text-white ">
           <StarRating
             value={(rating / 10) * 5}
@@ -155,6 +155,8 @@ export function TripHeroCarousel({
             className="text-white stroke-white! [&_svg]:stroke-white!"
           />
         </div>
+      ) : (
+        ""
       )}
     </section>
   );
