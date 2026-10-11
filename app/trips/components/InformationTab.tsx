@@ -75,11 +75,13 @@ export default function InformationTab({ trip }: { trip: Trip }) {
           </dt>
           <dd className="text-left text-body flex-2">
             <ul className="list-none grid md:grid-cols-2 grid-cols-1 gap-1 text-body">
-              {trip.tripFields.tripDetails.whatsIncluded.map((item, i) => (
-                <li className="flex items-center gap-2" key={i}>
-                  <Check className="text-primary w-4" /> {item.item}
-                </li>
-              ))}
+              {trip.tripFields.tripDetails.whatsIncluded &&
+                trip.tripFields.tripDetails.whatsIncluded.length > 0 &&
+                trip.tripFields.tripDetails.whatsIncluded.map((item, i) => (
+                  <li className="flex items-center gap-2" key={i}>
+                    <Check className="text-primary w-4" /> {item.item}
+                  </li>
+                ))}
             </ul>
           </dd>
         </div>
@@ -89,11 +91,13 @@ export default function InformationTab({ trip }: { trip: Trip }) {
           </dt>
           <dd className="text-left text-body flex-2">
             <ul className="list-none grid md:grid-cols-2 grid-cols-1 gap-1 text-body">
-              {trip.tripFields.tripDetails.whatsNotIncluded.map((item, i) => (
-                <li className="flex items-center gap-2" key={i}>
-                  <IoMdClose className="text-primary w-4" /> {item.item}
-                </li>
-              ))}
+              {trip.tripFields.tripDetails.whatsNotIncluded &&
+                trip.tripFields.tripDetails.whatsNotIncluded.length > 0 &&
+                trip.tripFields.tripDetails.whatsNotIncluded.map((item, i) => (
+                  <li className="flex items-center gap-2" key={i}>
+                    <IoMdClose className="text-primary w-4" /> {item.item}
+                  </li>
+                ))}
             </ul>
           </dd>
         </div>

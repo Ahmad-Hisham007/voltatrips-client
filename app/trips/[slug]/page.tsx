@@ -44,9 +44,10 @@ export default async function TripPage({
   params: Promise<{ slug: string }>;
 }) {
   // slug not used - ID 31 is hardcoded for initial dev
+  const { slug } = await _params;
   const [trip, reviewComments] = await Promise.all([
-    fetchTrip(31),
-    fetchTripReviews(31),
+    fetchTrip(slug),
+    fetchTripReviews(slug),
   ]);
 
   if (!trip) notFound();

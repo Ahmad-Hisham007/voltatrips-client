@@ -61,7 +61,7 @@ export type Trip = NonNullable<TripQuery["trip"]>;
  * Returns typed data for the trip detail page.
  */
 export async function fetchTrip(
-  id: number,
+  slug: string,
   cacheLifeSeconds = 300,
 ): Promise<Trip | null> {
   const graphqlEndpoint = process.env.WORDPRESS_GRAPHQL_ENDPOINT;
@@ -69,7 +69,7 @@ export async function fetchTrip(
 
   const query = `
     query MyQuery($id: ID = "") {
-      trip(id: $id, idType: DATABASE_ID) {
+      trip(id: $id, idType: SLUG) {
         title
         slug
         id
@@ -126,8 +126,8 @@ export async function fetchTrip(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ query, variables: { id: String(id) } }),
-    next: { revalidate: cacheLifeSeconds, tags: [`trip:${id}`] },
+    body: JSON.stringify({ query, variables: { id: String(slug) } }),
+    next: { revalidate: cacheLifeSeconds, tags: [`trip:${slug}`] },
   });
 
   if (!res.ok) throw new Error(`WPGraphQL error: ${res.status}`);

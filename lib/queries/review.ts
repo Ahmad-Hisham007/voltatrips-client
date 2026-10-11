@@ -20,7 +20,7 @@ type GetTripWithReviewsResponse = {
 
 const GET_TRIP_WITH_REVIEWS = `
   query GetTripWithReviews($id: ID = "31") {
-    trip(id: $id, idType: DATABASE_ID) {
+    trip(id: $id, idType: SLUG) {
       id
       databaseId
       title
@@ -59,7 +59,7 @@ const GET_TRIP_WITH_REVIEWS = `
  * returned nodes are already the approved set.
  */
 export async function fetchTripReviews(
-  id: number,
+  slug: string,
   cacheLifeSeconds = 300,
 ): Promise<ReviewCommentNode[]> {
   const graphqlEndpoint = process.env.WORDPRESS_GRAPHQL_ENDPOINT;
@@ -72,9 +72,9 @@ export async function fetchTripReviews(
     },
     body: JSON.stringify({
       query: GET_TRIP_WITH_REVIEWS,
-      variables: { id: String(id) },
+      variables: { id: String(slug) },
     }),
-    next: { revalidate: cacheLifeSeconds, tags: [`trip:${id}:reviews`] },
+    next: { revalidate: cacheLifeSeconds, tags: [`trip:${slug}:reviews`] },
   });
 
   if (!res.ok) throw new Error(`WPGraphQL error: ${res.status}`);
