@@ -133,5 +133,6 @@ export async function fetchTrip(
   if (!res.ok) throw new Error(`WPGraphQL error: ${res.status}`);
 
   const json = (await res.json()) as { data?: { trip?: TripQuery["trip"] } };
+  console.log(json.data?.trip);
   return json.data?.trip ?? null;
 }

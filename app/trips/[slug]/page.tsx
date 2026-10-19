@@ -59,13 +59,15 @@ export default async function TripPage({
       {/* =========================================== */}
       {/* 1. HERO CAROUSEL (above fold, full-width)   */}
       {/* =========================================== */}
-      <TripHeroCarousel
-        images={trip.tripFields.tripGallery.nodes}
-        price={trip.tripFields.tripPrice}
-        title={trip.title}
-        duration={trip.tripFields.tripDuration}
-        rating={reviewSummary.averageRating}
-      />
+      {trip.tripFields.tripGallery && (
+        <TripHeroCarousel
+          images={trip.tripFields.tripGallery.nodes}
+          price={trip.tripFields.tripPrice}
+          title={trip.title}
+          duration={trip.tripFields.tripDuration}
+          rating={reviewSummary.averageRating}
+        />
+      )}
 
       {/* =========================================== */}
       {/* 2. MAIN LAYOUT: 2-column grid              */}
@@ -108,7 +110,12 @@ export default async function TripPage({
             </TabsContent>
 
             <TabsContent value="gallery">
-              <GalleryTab images={trip.tripFields.tripGallery.nodes} />
+              <GalleryTab
+                images={
+                  trip.tripFields.tripGallery &&
+                  trip.tripFields.tripGallery.nodes
+                }
+              />
             </TabsContent>
 
             <TabsContent value="reviews">
