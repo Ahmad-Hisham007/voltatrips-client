@@ -50,11 +50,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // OpenGraph image URL rewrite
-  const ogImageUrl = node.seo?.openGraph?.image?.url
-    ? node.seo.openGraph.image.url.replace(
-        "https://cms.voltatrips.com",
-        frontendUrl,
-      )
+  const ogImage = node.seo?.openGraph?.image?.url
+    ? {
+        url: node.seo.openGraph.image.url.replace(
+          "https://cms.voltatrips.com",
+          frontendUrl,
+        ),
+        width: node.seo?.openGraph?.image?.width ?? undefined,
+        height: node.seo?.openGraph?.image?.height ?? undefined,
+      }
     : undefined;
 
   return {
@@ -73,14 +77,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         node.seo?.openGraph?.description || node.seo?.description || undefined,
       siteName: node.seo?.openGraph?.siteName || undefined,
       type: node.seo?.openGraph?.type || undefined,
-      images: ogImageUrl
-        ? [
-            {
-              url: ogImageUrl,
-              width: node.seo.openGraph.image?.width || undefined,
-              height: node.seo.openGraph.image?.height || undefined,
-            },
-          ]
+      images: ogImage
+        ? [{ url: ogImage.url, width: ogImage.width, height: ogImage.height }]
         : undefined,
     },
   };
