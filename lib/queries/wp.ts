@@ -176,8 +176,12 @@ query GetNodeByUri($uri: String!) {
         }
         tripGallery {
           nodes {
-            link
-            title(format: RENDERED)
+            mediaDetails {
+              file
+              filePath
+              width
+              height
+            }
           }
         }
       }
