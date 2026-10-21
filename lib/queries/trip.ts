@@ -136,3 +136,44 @@ export async function fetchTrip(
   console.log(json.data?.trip);
   return json.data?.trip ?? null;
 }
+
+/**
+ * Fetch a lightweight list of all published trips (for the catalog/archive page).
+ */
+export async function fetchTripList(cacheLifeSeconds = 300): Promise<
+  Array<{ title: string; url: string; slug: string }>
+> {
+  const graphqlEndpoint = process.env.WORDPRESS_GRAPHQL_ENDPOINT;
+  if (!graphqlEndpoint) throw new Error("WORDPRESS_GRAPHQL_ENDPOINT not set");
+
+  const query = `
+    query GetAllTrips {
+      trips(first: 50) {
+        nodes {
+          title
+          uri
+          slug
+        }
+      }
+    }
+  `;
+
+  const res = await fetch(graphqlEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+    next: { revalidate: cacheLifeSeconds, tags: ["trip-list"] },
+  });
+
+  if (!res.ok) throw new Error(`WPGraphQL error: ${res.status}`);
+
+  const json = (await res.json()) as {
+    data?: { trips?: { nodes: Array<{ title: string; uri: string; slug: string }> } };
+  };
+
+  return (json.data?.trips?.nodes ?? []).map((n) => ({
+    title: n.title,
+    url: n.uri,
+    slug: n.slug,
+  }));
+}
