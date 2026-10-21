@@ -66,8 +66,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: node.seo?.description || "",
     robots: node.seo?.robots
       ? {
-          noindex: !!node.seo.robots.noindex,
-          nofollow: !!node.seo.robots.nofollow,
+          // Next.js 16 uses `index`/`follow` (noindex/nofollow are deprecated → `never`)
+          ...(node.seo.robots.noindex !== undefined
+            ? { index: !node.seo.robots.noindex }
+            : {}),
+          ...(node.seo.robots.nofollow !== undefined
+            ? { follow: !node.seo.robots.nofollow }
+            : {}),
         }
       : undefined,
     alternates: { canonical },
@@ -76,7 +81,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description:
         node.seo?.openGraph?.description || node.seo?.description || undefined,
       siteName: node.seo?.openGraph?.siteName || undefined,
-      type: node.seo?.openGraph?.type || undefined,
+      type: node.seo?.openGraph?.type as
+        | "website"
+        | "article"
+        | "book"
+        | "profile"
+        | "music.song"
+        | "music.album"
+        | "music.playlist"
+        | "music.radio_station"
+        | "video.movie"
+        | "video.episode"
+        | "video.tv_show"
+        | "video.other"
+        | undefined,
       images: ogImage
         ? [{ url: ogImage.url, width: ogImage.width, height: ogImage.height }]
         : undefined,

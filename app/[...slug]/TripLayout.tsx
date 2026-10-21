@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookingForm } from "@/components/booking-form";
 import { TripHeroCarousel } from "@/components/trip-hero-carousel";
 import InformationTab from "@/app/trips/components/InformationTab";
-import TourPlanTab from "@/app/trips/components/TourPlanTab";
+import { TourPlanTab } from "@/app/trips/components/TourPlanTab";
 import LocationTab from "@/app/trips/components/LocationTab";
 import GalleryTab from "@/app/trips/components/GalleryTab";
 import ReviewsTab from "@/app/trips/components/ReviewsTab";
